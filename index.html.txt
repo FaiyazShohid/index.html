@@ -1,0 +1,43 @@
+<script>
+    let quizIndex = 0;
+    const quizData = [
+        { question: "Can love have any reason?", answer: "No, it cannot." },
+        { question: "What am I when you are the Queen?", answer: "Citizen" },
+        { question: "Do you love me?", answer: "Yes" },
+        { question: "Do you love me?", answer: "Yes" },
+        { question: "Do you love me?", answer: "Yes" }
+    ];
+
+    function startQuiz() {
+        quizIndex = 0;
+        showNextQuizQuestion();
+    }
+
+    function showNextQuizQuestion() {
+        if (quizIndex < quizData.length) {
+            document.getElementById('quiz-question').innerText = quizData[quizIndex].question;
+            document.getElementById('quiz-answer').value = "";
+        } else {
+            nextStage('are-you-excited');
+        }
+    }
+
+    function submitAnswer() {
+        let userAnswer = document.getElementById('quiz-answer').value.trim();
+        if (userAnswer.toLowerCase() === quizData[quizIndex].answer.toLowerCase()) {
+            quizIndex++;
+            showNextQuizQuestion();
+        } else {
+            alert("Wrong answer, try again!");
+        }
+    }
+
+    function nextStage(stageId) {
+        document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
+        document.getElementById(stageId).classList.remove('hidden');
+
+        if (stageId === 'quiz') {
+            startQuiz();
+        }
+    }
+</script>
