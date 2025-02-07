@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal Experience</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #111;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            background-color: #ff4081;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #e6006b;
+        }
+        .hidden {
+            display: none;
+        }
+        .heart {
+            font-size: 30px;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-block;
+        }
+        .heart.clicked {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="welcome-screen">
+        <h2>Welcome cutesy, to this short arrangement!</h2>
+        <button onclick="startExperience()">Start</button>
+    </div>
+
+    <div class="container hidden" id="love-meter">
+        <h3>Love Meter</h3>
+        <div id="hearts"></div>
+        <progress id="meter" value="0" max="10"></progress>
+        <button id="love-meter-continue" class="hidden" onclick="nextStage('quiz')">Yes to continue</button>
+    </div>
+
+    <div class="container hidden" id="quiz">
+        <h3>Love Quiz</h3>
+        <p id="quiz-question"></p>
+        <input type="text" id="quiz-answer">
+        <button onclick="submitAnswer()">Submit</button>
+    </div>
+
+    <div class="container hidden" id="are-you-excited">
+        <h3>Are you excited?</h3>
+        <button onclick="handleExcitedResponse('yes')">Yes</button>
+        <button onclick="handleExcitedResponse('no')">No</button>
+        <p id="excited-warning" class="hidden">Please write "YES"</p>
+    </div>
+
+    <div class="container hidden" id="final-letter">
+        <p>Mi amor, life is so short when I want you so much...</p>
+        <br>
+        <p id="consent-question" class="hidden">Will you consent to be mine?</p>
+        <button id="yes-btn" class="hidden" onclick="handleConsentResponse('yes')">Yes</button>
+        <button id="no-btn" class="hidden" onclick="handleConsentResponse('no')">No</button>
+    </div>
+
+    <script>
+        function startExperience() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('love-meter').classList.remove('hidden');
+            createHearts();
+        }
+
+        function createHearts() {
+            let heartContainer = document.getElementById('hearts');
+            heartContainer.innerHTML = '';
+            let meter = document.getElementById('meter');
+            let count = 0;
+
+            for (let i = 0; i < 10; i++) {
+                let heart = document.createElement('span');
+                heart.innerHTML = '💜';
+                heart.classList.add('heart');
+                heart.onclick = function() {
+                    if (!heart.classList.contains('clicked')) {
+                        heart.classList.add('clicked');
+                        heart.innerHTML = '❤️';
+                        count++;
+                        meter.value = count;
+                        if (count === 10) {
+                            document.getElementById('love-meter-continue').classList.remove('hidden');
+                        }
+                    }
+                };
+                heartContainer.appendChild(heart);
+            }
+        }
+
+        let quizIndex = 0;
+        const quizData = [
+            { question: "Can love have any reason?", answer: "No, it cannot." },
+            { question: "What am I when you are the Queen?", answer: "Citizen" },
+            { question: "Do you love me?", answer: "Yes" },
+            { question: "Do you love me?", answer: "Yes" },
+            { question: "Do you love me?", answer: "Yes" }
+        ];
+
+        function startQuiz() {
+            quizIndex = 0;
+            showNextQuizQuestion();
+        }
+
+        function showNextQuizQuestion() {
+            if (quizIndex < quizData.length) {
+                document.getElementById('quiz-question').innerText = quizData[quizIndex].question;
+                document.getElementById('quiz-answer').value = "";
+            } else {
+                nextStage('are-you-excited');
+            }
+        }
+
+        function submitAnswer() {
+            let userAnswer = document.getElementById('quiz-answer').value.trim();
+            if (userAnswer.toLowerCase() === quizData[quizIndex].answer.toLowerCase()) {
+                quizIndex++;
+                showNextQuizQuestion();
+            } else {
+                alert("Wrong answer, try again!");
+            }
+        }
+
+        function nextStage(stageId) {
+            document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
+            document.getElementById(stageId).classList.remove('hidden');
+
+            if (stageId === 'quiz') {
+                startQuiz();
+            }
+        }
+
+        function handleExcitedResponse(response) {
+            if (response === 'yes') {
+                nextStage('final-letter');
+                setTimeout(() => {
+                    document.getElementById('consent-question').classList.remove('hidden');
+                    document.getElementById('yes-btn').classList.remove('hidden');
+                    document.getElementById('no-btn').classList.remove('hidden');
+                }, 5000);
+            } else {
+                document.getElementById('excited-warning').classList.remove('hidden');
+            }
+        }
+
+        function handleConsentResponse(response) {
+            document.getElementById('final-letter').innerHTML = response === 'yes' 
+                ? "<p>Thank you babygirl</p>" 
+                : "<p>I will steal you anyway</p>";
+
+            setTimeout(() => {
+                document.body.innerHTML = "";
+            }, response === 'yes' ? 5000 : 10000);
+        }
+    </script>
+</body>
+</html>
